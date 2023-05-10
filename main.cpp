@@ -1,6 +1,5 @@
 #include "Decoder.hpp"
 
-
 #include <iostream>
 #include <fstream>
 
