@@ -18,7 +18,6 @@ enum class InstType{
     UType0110111,
     JType
 };
-
 class Instruction
 {
 public:
