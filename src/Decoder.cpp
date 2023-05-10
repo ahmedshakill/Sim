@@ -154,7 +154,6 @@ std::unique_ptr<Instruction> Decoder::decode_instruction(const std::string& bin_
                 uinst.bin_str= bin_str;
                 uinst.rd=rd;
                 uinst.imm20=imm20;
-                uinst.mnemonic= UtypeInstruction::Mnemonic::AUIPC;
                 decoded_instruction_ptr = std::make_unique<UtypeInstruction>(std::move(uinst));
                 break;
             }
@@ -168,7 +167,6 @@ std::unique_ptr<Instruction> Decoder::decode_instruction(const std::string& bin_
                 uinst.bin_str= bin_str;
                 uinst.rd=rd;
                 uinst.imm20=imm20;
-                uinst.mnemonic= UtypeInstruction::Mnemonic::LUI;
                 decoded_instruction_ptr = std::make_unique<UtypeInstruction>(std::move(uinst));
                 break;
             }
@@ -182,7 +180,6 @@ std::unique_ptr<Instruction> Decoder::decode_instruction(const std::string& bin_
                 jinst.bin_str= bin_str;
                 jinst.rd=rd;
                 jinst.imm20=imm20;
-                jinst.mnemonic= JtypeInstruction::Mnemonic::JAL;
                 decoded_instruction_ptr = std::make_unique<JtypeInstruction>(std::move(jinst));
                 break;
             }
@@ -200,8 +197,8 @@ void Decoder::f3_R(const std::string& bin_str, RtypeInstruction& rtypeInstructio
         std::string rd  = bin_str.substr(20,5);
         std::string rs1 = bin_str.substr(12,5);
         std::string rs2 = bin_str.substr(7,5);
-        using Mnemonic= RtypeInstruction::Mnemonic;
         Mnemonic mnemonic;
+        
         Func3 f3 = CodeToFunc3[f3_str];
         switch (f3)
         {
@@ -292,7 +289,6 @@ void Decoder::f3_RW(const std::string& bin_str, RtypeInstruction& rtypeInstructi
         std::string rs1 = bin_str.substr(12,5);
         std::string rs2=bin_str.substr(7,5);
 
-        using Mnemonic= RtypeInstruction::Mnemonic;
         Mnemonic mnemonic;
 
         Func3 f3 = CodeToFunc3[f3_str];
@@ -371,7 +367,7 @@ void Decoder::f3_IType0000011(const std::string& bin_str, ItypeInstruction& ityp
         std::string rd = bin_str.substr(20,5);
         std::string rs1 = bin_str.substr(12,5);
         std::string imm12=bin_str.substr(0,12);
-        using Mnemonic= ItypeInstruction::Mnemonic;
+        
         Mnemonic mnemonic;
         Func3 f3 = CodeToFunc3[f3_str];
         switch (f3)
@@ -443,7 +439,7 @@ void Decoder::f3_IType0010011(const std::string& bin_str, ItypeInstruction& ityp
         std::string imm12{};
         std::string shamt{};
         std::string f7_str{};
-        using Mnemonic= ItypeInstruction::Mnemonic;
+
         Mnemonic mnemonic;
 
         Func3 f3 = CodeToFunc3[f3_str];
@@ -531,7 +527,7 @@ void Decoder::f3_IType1100111(const std::string& bin_str, ItypeInstruction& ityp
         std::string rd = bin_str.substr(20,5);
         std::string rs1 = bin_str.substr(12,5);
         std::string imm12=bin_str.substr(0,12);
-        using Mnemonic= ItypeInstruction::Mnemonic;
+        
         Mnemonic mnemonic;
         
         Func3 f3 = CodeToFunc3[f3_str];
@@ -599,7 +595,7 @@ void Decoder::f3_IType1110011(const std::string& bin_str, ItypeInstruction& ityp
         std::string csr = bin_str.substr(0,12);
         std::string rs1{};
         std::string zimm{};
-        using Mnemonic= ItypeInstruction::Mnemonic;
+
         Mnemonic mnemonic;
 
         Func3 f3 = CodeToFunc3[f3_str];
@@ -682,8 +678,7 @@ void Decoder::f3_IW(const std::string& bin_str, ItypeInstruction& itypeInstructi
         std::string rs1 = bin_str.substr(12,5);
         std::string imm12{};
         std::string shamt{};
-
-        using Mnemonic= ItypeInstruction::Mnemonic;
+        
         Mnemonic mnemonic;
         
         Func3 f3 = CodeToFunc3[f3_str];
@@ -756,8 +751,8 @@ void Decoder::f3_S(const std::string& bin_str, StypeInstruction& stypeInstructio
         
         std::string rs1 = bin_str.substr(12,5);
         std::string rs2 =bin_str.substr(7,5);
-        std::string imm12 = bin_str.substr(0,7)+bin_str.substr(20,5);
-        using Mnemonic= StypeInstruction::Mnemonic;
+        std::string imm12 = bin_str.substr(20,5)+bin_str.substr(0,7);
+        
         Mnemonic mnemonic;
         
         Func3 f3 = CodeToFunc3[f3_str];
@@ -826,7 +821,7 @@ void Decoder::f3_B(const std::string& bin_str, BtypeInstruction& btypeInstructio
         std::string rs1 = bin_str.substr(12,5);
         std::string rs2 =bin_str.substr(7,5);
         std::string imm12 = bin_str.substr(20,4)+bin_str.substr(1,6)+bin_str.substr(24,1)+bin_str.substr(0,1);
-        using Mnemonic= BtypeInstruction::Mnemonic;
+        
         Mnemonic mnemonic;
 
         Func3 f3 = CodeToFunc3[f3_str];

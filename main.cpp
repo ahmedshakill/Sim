@@ -1,4 +1,5 @@
 #include "Decoder.hpp"
+#include "Executor.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -35,7 +36,8 @@ int main(){
     decoder.decode(ins_buffer);
     
     std::vector<std::unique_ptr<Instruction>>& decoded_inst_vec = decoder.get_decoded_instruction();
-    std::cout<<decoder.sstream.str()<<std::endl;
+    Executor executor{};
+    executor.execute(decoded_inst_vec);
 
     return 0;
 }

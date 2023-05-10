@@ -20,7 +20,7 @@ class Executor{
             Register& operator=(const Register&)=delete;
             Register& operator=(Register&&)=delete;
 
-            static std::unordered_map<std::string,int> reg_file;
+            static std::unordered_map<std::string,std::int64_t> reg_file;
             static int pc;
 
             static Register& get_instance(){
@@ -45,11 +45,7 @@ public:
     void handleUType0010111(std::unique_ptr<Instruction>& inst);
     void handleUType0110111(std::unique_ptr<Instruction>& inst);
     void handleJType(std::unique_ptr<Instruction>& inst);
-
-    template<size_t N>
-    int string_to_integer(const std::string& immediate);
 private:
-    static std::unordered_map<int,int> Memory;
 
 };
 

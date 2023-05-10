@@ -1,7 +1,7 @@
 #ifndef H_DECODE
 #define H_DECODE
 
-//#include "Mnemonic.hpp"
+#include "Mnemonic.hpp"
 #include "Instruction.hpp"
 #include <sstream>
 #include <unordered_map>
