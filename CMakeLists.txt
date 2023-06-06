@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD 23)
 # SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 SET(CMAKE_EXE_LINKER_FLAGS 
           "${CMAKE_EXE_LINKER_FLAGS} -Wl,-rpath -Wl,/opt/gcc-latest/lib64/")
-
 include(CTest)
 Include(FetchContent)
 

@@ -38,12 +38,11 @@ std::unordered_map<std::string,int> Executor::Register::reg_file{
         {"11111",0},
 };
 
-int Executor::Register::pc=0x00000000;
+int Executor::pc=0x00000000;
 
 std::unordered_map<int,int> Executor::Memory={{0,0}};
 
-void Executor::execute(std::vector<std::unique_ptr<Instruction>> &decoded_inst_vec) {
-    for(auto& inst : decoded_inst_vec){
+void Executor::execute(std::unique_ptr<Instruction>& inst) {
         switch (inst->instType) {
             case InstType::RType:
             {
@@ -107,7 +106,7 @@ void Executor::execute(std::vector<std::unique_ptr<Instruction>> &decoded_inst_v
             }
 
         }
-    }
+
 }
 
 void Executor::handleRType(std::unique_ptr<Instruction>& inst){
@@ -269,7 +268,6 @@ void Executor::handleIType0010011(std::unique_ptr<Instruction>& inst){
     }
 
 
-
 }
 void Executor::handleIType1100111(std::unique_ptr<Instruction>& inst){
 
@@ -305,6 +303,16 @@ void Executor::handleSType(std::unique_ptr<Instruction>& inst){
     }
 }
 void Executor::handleBType(std::unique_ptr<Instruction>& inst){
+    auto binst = reinterpret_cast<BtypeInstruction*>( inst.get());
+    std::cout<<"btype imm13 "<<binst->imm13<<std::endl;
+    int imm13= string_to_integer<13>(binst->imm13);
+    std::cout<<"btype imm13 "<<imm13<<std::endl;
+    std::cout<<"rs1 "<<binst->rs1 << " rs2 "<< binst->rs2 << std::endl;
+    std::cout<<"rs1 "<<Executor::Register::reg_file[binst->rs1]<<" rs2 "<<Executor::Register::reg_file[binst->rs2]<<std::endl;
+    if(Executor::Register::reg_file[binst->rs2]==Executor::Register::reg_file[binst->rs1]) {
+        Executor::pc+=imm13;
+        pc_modified=true;
+    }
 
 }
 void Executor::handleUType0010111(std::unique_ptr<Instruction>& inst){
@@ -320,13 +328,13 @@ void Executor::handleJType(std::unique_ptr<Instruction>& inst){
 template<size_t N>
 int Executor::string_to_integer(const std::string& immediate){
     std::bitset<N> immN_bt(immediate);
-    std::bitset<N> oneN_bt("000000000001");
+    std::bitset<N> oneN_bt(1);
     std::bitset<N> immN_positive;
     int immN;
     if(immN_bt[N-1]==1){        // handle negative number
         immN_bt=immN_bt.flip();
         bool carry=false;
-        for(int id=0;id<12;id++){
+        for(int id=0;id<N;id++){
             immN_positive[id]=(immN_bt[id]^oneN_bt[id]) ^ carry;
             carry = (immN_bt[id] && oneN_bt[id])|| (immN_bt[id] && carry)
                     || (oneN_bt[id] && carry );

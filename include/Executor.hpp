@@ -21,7 +21,6 @@ class Executor{
             Register& operator=(Register&&)=delete;
 
             static std::unordered_map<std::string,int> reg_file;
-            static int pc;
 
             static Register& get_instance(){
                 static Register instance;
@@ -32,7 +31,7 @@ class Executor{
 public:
     Register& reg=Register::get_instance();
     Executor()=default;
-    void execute(std::vector<std::unique_ptr<Instruction>>& decoded_inst_vec);
+    void execute(std::unique_ptr<Instruction>& inst) ;
     void handleRType(std::unique_ptr<Instruction>& inst);
     void handleRWType(std::unique_ptr<Instruction>& inst);
     void handleIType0000011(std::unique_ptr<Instruction>& inst);
@@ -48,6 +47,8 @@ public:
 
     template<size_t N>
     int string_to_integer(const std::string& immediate);
+    static int pc;
+    bool pc_modified =false;
 private:
     static std::unordered_map<int,int> Memory;
 
