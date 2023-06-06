@@ -43,21 +43,9 @@ Decoder::Decoder(){
 
 }
 
-void Decoder::decode(const std::vector<std::string>& ins_buffer){
-    
-    for(const auto& str : ins_buffer){
-        // std::cout<<str<<"\n";
-        std::string bin_str{to_bit_string(str)};
-        sstream << bin_str << std::endl;
-        std::unique_ptr<Instruction> decoded_instruction {decode_instruction(bin_str)};
-        if(not decoded_instruction->opcode.empty())
-        decoded_inst_vec.push_back(std::move(decoded_instruction));
-    }
-}
-
 std::unique_ptr<Instruction> Decoder::decode_instruction(const std::string& bin_str){
     int off = 7; 
-    std::string oc_str = "0b" + bin_str.substr(32-off,off);
+    std::string oc_str = Ob + bin_str.substr(32-off,off);
     InstType inst_type = CodeToInstType[oc_str];
 
     std::unique_ptr<Instruction> decoded_instruction_ptr;
@@ -194,8 +182,8 @@ std::unique_ptr<Instruction> Decoder::decode_instruction(const std::string& bin_
 }
 
 void Decoder::f3_R(const std::string& bin_str, RtypeInstruction& rtypeInstruction){
-        std::string f3_str = "0b" + bin_str.substr(17,3);
-        std::string f7_str = "0b" + bin_str.substr(0,7);
+        std::string f3_str = Ob + bin_str.substr(17,3);
+        std::string f7_str = Ob + bin_str.substr(0,7);
 
         std::string rd  = bin_str.substr(20,5);
         std::string rs1 = bin_str.substr(12,5);
@@ -208,66 +196,66 @@ void Decoder::f3_R(const std::string& bin_str, RtypeInstruction& rtypeInstructio
             case Func3::F000:
                 {
                     sstream<<"F000 ";
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::ADD; sstream<<"ADD ";}
-                    if(f7_str == "0b0100000") { mnemonic=Mnemonic::SUB; sstream<<"SUB ";}
-                    if(f7_str == "0b0000001") { mnemonic=Mnemonic::MUL; sstream<<"MUL ";}
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::ADD; sstream << "ADD ";}
+                    if(f7_str == f7b0100000 ) { mnemonic=Mnemonic::SUB; sstream << "SUB ";}
+                    if(f7_str == f7b0000001) { mnemonic=Mnemonic::MUL; sstream << "MUL ";}
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" rs2="<<rs2<<" "<<std::endl;
                     break;
                 }
             case Func3::F001:
                 {
                     sstream<<"F001 ";
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::SLL ; sstream<<"SLL ";}
-                    if(f7_str == "0b0000001") { mnemonic=Mnemonic::MULH ; sstream<<"MULH ";}
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::SLL ; sstream << "SLL ";}
+                    if(f7_str == f7b0000001) { mnemonic=Mnemonic::MULH ; sstream << "MULH ";}
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" rs2="<<rs2<<" "<<std::endl;
                     break;
                 }
             case Func3::F010:
                 {
                     sstream<<"F010 ";
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::SLT ; sstream<<"SLT ";}
-                    if(f7_str == "0b0000001") { mnemonic=Mnemonic::MULHSU ; sstream<<"MULHSU ";}
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::SLT ; sstream << "SLT ";}
+                    if(f7_str == f7b0000001) { mnemonic=Mnemonic::MULHSU ; sstream << "MULHSU ";}
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" rs2="<<rs2<<" "<<std::endl;
                     break;
                 }
             case Func3::F011:
                 {
                     sstream<<"F011 ";
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::SLTU ; sstream<<"SLTU "; }
-                    if(f7_str == "0b0000001") { mnemonic=Mnemonic::MULHU ; sstream<<"MULHU "; }
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::SLTU ; sstream << "SLTU "; }
+                    if(f7_str == f7b0000001) { mnemonic=Mnemonic::MULHU ; sstream << "MULHU "; }
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" rs2="<<rs2<<" "<<std::endl;
                     break;
                 }
             case Func3::F100:
                 {
                     sstream<<"F100 ";
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::XOR ; sstream<<"XOR "; }
-                    if(f7_str == "0b0000001") { mnemonic=Mnemonic::DIV ; sstream<<"DIV "; }
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::XOR ; sstream << "XOR "; }
+                    if(f7_str == f7b0000001) { mnemonic=Mnemonic::DIV ; sstream << "DIV "; }
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" rs2="<<rs2<<" "<<std::endl;
                     break;
                 }
             case Func3::F101:
                 {
                     sstream<<"F101 ";
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::SRL ; sstream<<"SRL "; }
-                    if(f7_str == "0b0100000") { mnemonic=Mnemonic::SRA ; sstream<<"SRA "; }
-                    if(f7_str == "0b0000001") { mnemonic=Mnemonic::DIVU ; sstream<<"DIVU "; }
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::SRL ; sstream << "SRL "; }
+                    if(f7_str == f7b0100000) { mnemonic=Mnemonic::SRA ; sstream << "SRA "; }
+                    if(f7_str == f7b0000001) { mnemonic=Mnemonic::DIVU ; sstream << "DIVU "; }
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" rs2="<<rs2<<" "<<std::endl;
                     break;
                 }
             case Func3::F110:
                 {
                     sstream<<"F110 ";
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::OR ; sstream<<"OR ";}
-                    if(f7_str == "0b0000001") { mnemonic=Mnemonic::REM ; sstream<<"REM ";}
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::OR ; sstream << "OR ";}
+                    if(f7_str == f7b0000001) { mnemonic=Mnemonic::REM ; sstream << "REM ";}
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" rs2="<<rs2<<" "<<std::endl;
                     break;
                 }
             case Func3::F111:
                 {
                     sstream<<"F111 ";
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::AND ; sstream<<"AND ";}
-                    if(f7_str == "0b0000001") { mnemonic=Mnemonic::REMU ; sstream<<"REMU ";}
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::AND ; sstream << "AND ";}
+                    if(f7_str == f7b0000001) { mnemonic=Mnemonic::REMU ; sstream << "REMU ";}
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" rs2="<<rs2<<" "<<std::endl;
                     break;
                 }
@@ -285,8 +273,8 @@ void Decoder::f3_R(const std::string& bin_str, RtypeInstruction& rtypeInstructio
 }
 
 void Decoder::f3_RW(const std::string& bin_str, RtypeInstruction& rtypeInstruction) {
-        std::string f3_str = "0b" + bin_str.substr(17,3);
-        std::string f7_str = "0b" + bin_str.substr(0,7);
+        std::string f3_str = Ob + bin_str.substr(17,3);
+        std::string f7_str = Ob + bin_str.substr(0,7);
         
         std::string rd = bin_str.substr(20,5);
         std::string rs1 = bin_str.substr(12,5);
@@ -301,9 +289,9 @@ void Decoder::f3_RW(const std::string& bin_str, RtypeInstruction& rtypeInstructi
             case Func3::F000:
                 {
                     sstream<<"F000 ";
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::ADDW ; sstream<<"ADDW "; }
-                    if(f7_str == "0b0100000") { mnemonic=Mnemonic::SUBW ; sstream<<"SUBW "; }
-                    if(f7_str == "0b0000001") { mnemonic=Mnemonic::MULW ; sstream<<"MULW "; }
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::ADDW ; sstream << "ADDW "; }
+                    if(f7_str == f7b0100000) { mnemonic=Mnemonic::SUBW ; sstream << "SUBW "; }
+                    if(f7_str == f7b0000001) { mnemonic=Mnemonic::MULW ; sstream << "MULW "; }
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" rs2="<<rs2<<" "<<std::endl;
                     break;
                 }
@@ -332,9 +320,9 @@ void Decoder::f3_RW(const std::string& bin_str, RtypeInstruction& rtypeInstructi
             case Func3::F101:
                 {
                     sstream<<"F101 ";
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::SRLW ; sstream<<"SRLW "; }
-                    if(f7_str == "0b0100000") { mnemonic=Mnemonic::SRAW ; sstream<<"SRAW "; }
-                    if(f7_str == "0b0000001") { mnemonic=Mnemonic::DIVUW ; sstream<<"DIVUW "; }
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::SRLW ; sstream << "SRLW "; }
+                    if(f7_str == f7b0100000) { mnemonic=Mnemonic::SRAW ; sstream << "SRAW "; }
+                    if(f7_str == f7b0000001) { mnemonic=Mnemonic::DIVUW ; sstream << "DIVUW "; }
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" rs2="<<rs2<<" "<<std::endl;
                     break;
                 }
@@ -354,19 +342,17 @@ void Decoder::f3_RW(const std::string& bin_str, RtypeInstruction& rtypeInstructi
             default:
                 break;
         }
-        
-//        RtypeInstruction rinst{};
+
         rtypeInstruction.rd=rd;
         rtypeInstruction.f3=f3_str;
         rtypeInstruction.rs1=rs1;
         rtypeInstruction.rs2=rs2;
         rtypeInstruction.f7=f7_str;
         rtypeInstruction.mnemonic=mnemonic;
-//        return std::move(rinst);
 }
 
 void Decoder::f3_IType0000011(const std::string& bin_str, ItypeInstruction& itypeInstruction){
-        std::string f3_str = "0b" + bin_str.substr(17,3);
+        std::string f3_str = Ob + bin_str.substr(17,3);
         
         std::string rd = bin_str.substr(20,5);
         std::string rs1 = bin_str.substr(12,5);
@@ -437,7 +423,7 @@ void Decoder::f3_IType0000011(const std::string& bin_str, ItypeInstruction& ityp
 }
 
 void Decoder::f3_IType0010011(const std::string& bin_str, ItypeInstruction& itypeInstruction){
-        std::string f3_str = "0b" + bin_str.substr(17,3);
+        std::string f3_str = Ob + bin_str.substr(17,3);
         std::string rd = bin_str.substr(20,5);
         std::string rs1 = bin_str.substr(12,5);
         std::string imm12{};
@@ -488,7 +474,7 @@ void Decoder::f3_IType0010011(const std::string& bin_str, ItypeInstruction& ityp
                 {
                     sstream<<"IType0010011 F101 "<<std::endl;
                     shamt = bin_str.substr(7,5);
-                    f7_str = "0b" + bin_str.substr(0,7);
+                    f7_str = Ob + bin_str.substr(0,7);
                     if(f7_str=="0b0000000") { mnemonic=Mnemonic::SRLI ; sstream<<"SRLI"<<std::endl;}
                     if(f7_str=="0b0100000") { mnemonic=Mnemonic::SRAI ; sstream<<"SRAI"<<std::endl;}
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" shamt="<<shamt<<" "<<std::endl;
@@ -513,7 +499,7 @@ void Decoder::f3_IType0010011(const std::string& bin_str, ItypeInstruction& ityp
                 break;
         }
 
-//        ItypeInstruction iinst{};
+
         itypeInstruction.rd=rd;
         itypeInstruction.f3=f3_str;
         itypeInstruction.rs1=rs1;
@@ -521,16 +507,16 @@ void Decoder::f3_IType0010011(const std::string& bin_str, ItypeInstruction& ityp
         itypeInstruction.shamt=shamt;
         itypeInstruction.f7=f7_str;
         itypeInstruction.mnemonic=mnemonic;
-//        return std::move(iinst);
+
 
 }
 
 void Decoder::f3_IType1100111(const std::string& bin_str, ItypeInstruction& itypeInstruction){
-        std::string f3_str = "0b" + bin_str.substr(17,3);
+        std::string f3_str = Ob + bin_str.substr(17,3);
 
         std::string rd = bin_str.substr(20,5);
         std::string rs1 = bin_str.substr(12,5);
-        std::string imm12=bin_str.substr(0,12);
+        std::string imm12 = bin_str.substr(0,12);
         using Mnemonic= ItypeInstruction::Mnemonic;
         Mnemonic mnemonic;
         
@@ -593,7 +579,7 @@ void Decoder::f3_IType1100111(const std::string& bin_str, ItypeInstruction& ityp
 }
 
 void Decoder::f3_IType1110011(const std::string& bin_str, ItypeInstruction& itypeInstruction){
-        std::string f3_str = "0b" + bin_str.substr(17,3);
+        std::string f3_str = Ob + bin_str.substr(17,3);
         
         std::string rd = bin_str.substr(20,5);
         std::string csr = bin_str.substr(0,12);
@@ -608,9 +594,9 @@ void Decoder::f3_IType1110011(const std::string& bin_str, ItypeInstruction& ityp
             case Func3::F000:
                 {
                     sstream<<"IType1110011 F000 ";
-                    std::string last12bits ="0b" + bin_str.substr(0,12);
-                    if(last12bits == "0b000000000000") { mnemonic=Mnemonic::ECALL; sstream<< "ECALL"<<std::endl;}
-                    if(last12bits == "0b000000000001") { mnemonic=Mnemonic::EBREAK; sstream<< "EBREAK"<<std::endl;}
+                    std::string last12bits =Ob + bin_str.substr(0,12);
+                    if(last12bits == last12b000000000000) { mnemonic=Mnemonic::ECALL; sstream<< "ECALL"<<std::endl;}
+                    if(last12bits == last12b000000000001) { mnemonic=Mnemonic::EBREAK; sstream<< "EBREAK"<<std::endl;}
                     break;
                 }
             case Func3::F001:
@@ -675,8 +661,8 @@ void Decoder::f3_IType1110011(const std::string& bin_str, ItypeInstruction& ityp
 }
 
 void Decoder::f3_IW(const std::string& bin_str, ItypeInstruction& itypeInstruction){
-        std::string f3_str = "0b" + bin_str.substr(17,3);
-        std::string f7_str = "0b" + bin_str.substr(0,7);
+        std::string f3_str = Ob + bin_str.substr(17,3);
+        std::string f7_str = Ob + bin_str.substr(0,7);
         
         std::string rd = bin_str.substr(20,5);
         std::string rs1 = bin_str.substr(12,5);
@@ -722,8 +708,8 @@ void Decoder::f3_IW(const std::string& bin_str, ItypeInstruction& itypeInstructi
                 {
                     sstream<<"F101 ";
                     shamt=bin_str.substr(7,5);
-                    if(f7_str == "0b0000000") { mnemonic=Mnemonic::SRLIW ; sstream<<" SRLIW "<<std::endl;}
-                    if(f7_str == "0b0100000") { mnemonic=Mnemonic::SRAIW ; sstream<<" SRAIW "<<std::endl;}
+                    if(f7_str == f7b0000000) { mnemonic=Mnemonic::SRLIW ; sstream<<" SRLIW "<<std::endl;}
+                    if(f7_str == f7b0100000) { mnemonic=Mnemonic::SRAIW ; sstream<<" SRAIW "<<std::endl;}
                     sstream<<" rd="<<rd<<" rs1="<<rs1<<" shamt="<<shamt<<" "<<std::endl;
                     break;
                 }
@@ -752,7 +738,7 @@ void Decoder::f3_IW(const std::string& bin_str, ItypeInstruction& itypeInstructi
 }
 
 void Decoder::f3_S(const std::string& bin_str, StypeInstruction& stypeInstruction){
-        std::string f3_str = "0b" + bin_str.substr(17,3);
+        std::string f3_str = Ob + bin_str.substr(17,3);
         
         std::string rs1 = bin_str.substr(12,5);
         std::string rs2 =bin_str.substr(7,5);
@@ -821,11 +807,12 @@ void Decoder::f3_S(const std::string& bin_str, StypeInstruction& stypeInstructio
 }
 
 void Decoder::f3_B(const std::string& bin_str, BtypeInstruction& btypeInstruction){
-        std::string f3_str = "0b" + bin_str.substr(17,3);
+        std::string f3_str = Ob + bin_str.substr(17,3);
         
         std::string rs1 = bin_str.substr(12,5);
         std::string rs2 =bin_str.substr(7,5);
-        std::string imm12 = bin_str.substr(20,4)+bin_str.substr(1,6)+bin_str.substr(24,1)+bin_str.substr(0,1);
+        //append zer0 to the beginning to get the ultimate 13 bit immediate value.
+        std::string imm13 = bin_str.substr(0,1)+bin_str.substr(24,1)+bin_str.substr(1,6)+bin_str.substr(20,4)+'0';
         using Mnemonic= BtypeInstruction::Mnemonic;
         Mnemonic mnemonic;
 
@@ -835,13 +822,13 @@ void Decoder::f3_B(const std::string& bin_str, BtypeInstruction& btypeInstructio
             case Func3::F000:
                 {
                     mnemonic=Mnemonic::BEQ ;
-                    sstream<<"F000 BEQ rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm12<<" "<<std::endl;
+                    sstream<<"F000 BEQ rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm13<<" "<<std::endl;
                     break;
                 }
             case Func3::F001:
                 {
                     mnemonic=Mnemonic::BNE ;
-                    sstream<<"F001 BNE rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm12<<" "<<std::endl;
+                    sstream<<"F001 BNE rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm13<<" "<<std::endl;
                     break;
                 }
             case Func3::F010:
@@ -857,26 +844,26 @@ void Decoder::f3_B(const std::string& bin_str, BtypeInstruction& btypeInstructio
             case Func3::F100:
                 {
                     mnemonic=Mnemonic::BLT ;
-                    sstream<<"F100 BLT rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm12<<" "<<std::endl;
+                    sstream<<"F100 BLT rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm13<<" "<<std::endl;
                     break;
                 }
             case Func3::F101:
                 {
                     mnemonic=Mnemonic::BGE ;
-                    sstream<<"F101 BGE rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm12<<" "<<std::endl;
+                    sstream<<"F101 BGE rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm13<<" "<<std::endl;
                     
                     break;
                 }
             case Func3::F110:
                 {
                     mnemonic=Mnemonic::BLTU ;
-                    sstream<<"F110 BLTU rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm12<<" "<<std::endl;
+                    sstream<<"F110 BLTU rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm13<<" "<<std::endl;
                     break;
                 }
             case Func3::F111:
                 {
                     mnemonic=Mnemonic::BGEU ;
-                    sstream<<"F111 BGEU rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm12<<" "<<std::endl;
+                    sstream<<"F111 BGEU rs1="<<rs1<<" rs2="<<rs2<<" imm12="<<imm13<<" "<<std::endl;
                     break;
                 }
         
@@ -886,7 +873,8 @@ void Decoder::f3_B(const std::string& bin_str, BtypeInstruction& btypeInstructio
         
         btypeInstruction.f3=f3_str;
         btypeInstruction.rs1=rs1;
-        btypeInstruction.imm12=imm12;
+        btypeInstruction.rs2=rs2;
+        btypeInstruction.imm13=imm13;
         btypeInstruction.mnemonic=mnemonic;
 
 }
@@ -902,6 +890,6 @@ std::string Decoder::to_bit_string(const std::string& ins){
     return std::move (bin_str);
 }
 
-std::vector<std::unique_ptr<Instruction>>& Decoder::get_decoded_instruction(){
-    return decoded_inst_vec; // return reference
-}
+//std::vector<std::unique_ptr<Instruction>>& Decoder::get_decoded_instruction(){
+//    return decoded_inst_vec; // return reference
+//}

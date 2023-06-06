@@ -152,7 +152,7 @@ public:
         NOT_SET
     };
     Mnemonic mnemonic;
-    std::string f3,rs1,rs2,imm12;
+    std::string f3,rs1,rs2,imm13;
     BtypeInstruction()=default;
     BtypeInstruction(InstType _instType, std::string _opcode);
 };
